@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carga de paquetes Amichi</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <section>
+        <h2>Carga de Datos - Amichi</h2>
+
+        <label for="tarifa_IGR">Tarifa IGR:</label>
+        <input type="number" step="0.01" id="tarifa_IGR" value="37.5" required>
+
+        <label for="tarifa_OTROS">Tarifa OTROS:</label>
+        <input type="number" step="0.01" id="tarifa_OTROS" value="27.5" required>
+
+        <button onclick="enviarDatosAlServidor()">Formatear</button>
+        <button onclick="agregarFila()">Agregar fila</button>
+    </section>
+
+    <br><br>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>DESTINO</th>
+                <th>FECHA</th>
+                <th>HOTEL</th>
+                <th>TARIFA AMICHI x PAX</th>
+                <th>VTA TTL x 2 PAXS</th>
+                <th>BASE</th>
+                <th>CANT DE HAB</th>
+                <th>CANT DE PAX</th>
+                <th>VUELOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="../static/script.js" defer></script>
+</body>
+</html>
