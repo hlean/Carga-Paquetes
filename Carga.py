@@ -154,7 +154,7 @@ def procesar_datos(df, tarifa_IGR, tarifa_OTROS):
                 calcular_base_doble(texto, destino), "", "",
                 "ARS", "Si", "", "", "", ""
             ])
-        '''
+        
         if len(vuelos) == 3:
             inicial = vuelos[0]
             ultimo = vuelos[2]
@@ -180,7 +180,7 @@ def procesar_datos(df, tarifa_IGR, tarifa_OTROS):
                 calcular_base_doble(texto, destino), "", "",
                 "ARS", "Si", "", "", "", ""
             ])
-        '''
+        
         if len(vuelos) == 4:
             ida_1, vuelta_1 = vuelos[0], vuelos[1]
             ida_2, vuelta_2 = vuelos[2], vuelos[3]
