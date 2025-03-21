@@ -25,7 +25,7 @@ def procesar_datos_tabla():
         output_path = os.path.join("/tmp", output_file)
         df_procesado.to_excel(output_path, index=False)
 
-        filas_fallidas = df_procesado[df_procesado.isnull().any(axis=1+1)].index.tolist()
+        filas_fallidas = df_procesado[df_procesado.isnull().any(axis=1)].index.tolist()
         
         if filas_fallidas:
             return jsonify({
