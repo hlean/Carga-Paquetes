@@ -64,10 +64,9 @@ function enviarDatosAlServidor() {
     .then(datos => {
         if (datos.success === false) {
             const filasFallidas = datos.failed_rows.join(", ");
-            const mensajeError = `Las siguientes filas fallaron en el procesamiento: ${filasFallidas}`;
-            document.getElementById("error-message").innerHTML = `<p>${mensajeError}</p>`;
+            const mensajeError = `Filas que fallo el formato: ${filasFallidas}`;
+            document.getElementById("mensajeError").innerHTML = `<p>${mensajeError}</p>`;
         } else {
-            // Si el procesamiento fue exitoso, redirigir a la descarga
             window.location.href = datos.download_url;
         }
     })

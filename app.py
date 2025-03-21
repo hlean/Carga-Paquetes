@@ -25,13 +25,12 @@ def procesar_datos_tabla():
         output_path = os.path.join("/tmp", output_file)
         df_procesado.to_excel(output_path, index=False)
 
-        # Comprobamos si alguna fila fallo en el procesamiento
-        filas_fallidas = df_procesado[df_procesado.isnull().any(axis=1)].index.tolist()
+        filas_fallidas = df_procesado[df_procesado.isnull().any(axis=1+1)].index.tolist()
         
         if filas_fallidas:
             return jsonify({
                 "success": False,
-                "error": "Algunas filas no pudieron ser procesadas.",
+                "error": "Algunas filas no pudieron ser procesadas por formato erroneo.",
                 "failed_rows": filas_fallidas
             }), 400
         
