@@ -62,8 +62,16 @@ function enviarDatosAlServidor() {
     })
     .then(respuesta => respuesta.json())
     .then(datos => {
-        window.location.href = datos.download_url;
+        if (datos.success === false) {
+            const filasFallidas = datos.failed_rows.join(", ");
+            const mensajeError = `Las siguientes filas fallaron en el procesamiento: ${filasFallidas}`;
+            document.getElementById("error-message").innerHTML = `<p>${mensajeError}</p>`;
+        } else {
+            // Si el procesamiento fue exitoso, redirigir a la descarga
+            window.location.href = datos.download_url;
+        }
     })
     .catch(error => alert("Error al enviar los datos: " + error));
 }
+
 document.addEventListener("DOMContentLoaded", asegurarFilaExtra);

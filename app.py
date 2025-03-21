@@ -25,6 +25,16 @@ def procesar_datos_tabla():
         output_path = os.path.join("/tmp", output_file)
         df_procesado.to_excel(output_path, index=False)
 
+        # Comprobamos si alguna fila fallo en el procesamiento
+        filas_fallidas = df_procesado[df_procesado.isnull().any(axis=1)].index.tolist()
+        
+        if filas_fallidas:
+            return jsonify({
+                "success": False,
+                "error": "Algunas filas no pudieron ser procesadas.",
+                "failed_rows": filas_fallidas
+            }), 400
+        
         return jsonify({"success": True, "download_url": f"/download/{output_file}"})
 
     except Exception as e:
