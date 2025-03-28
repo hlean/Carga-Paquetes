@@ -16,6 +16,8 @@ def procesar_datos_tabla():
         tarifa_IGR = float(request.json.get("tarifa_IGR"))
         tarifa_OTROS = float(request.json.get("tarifa_OTROS"))
 
+        data = [fila[1:] for fila in data]
+
         columnas = ["DESTINO", "FECHA", "HOTEL", "TARIFA AMICHI x PAX", "VTA TTL x 2 PAXS", "BASE", "CANT DE HAB", "CANT DE PAX", "VUELOS"]
         df = pd.DataFrame(data, columns=columnas)
         df["FECHA"] = pd.to_datetime(df["FECHA"], errors="coerce")
