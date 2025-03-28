@@ -1,76 +1,82 @@
+const table = document.getElementById("dataTable");
+const tbody = table.querySelector("tbody");
+const mensajeError = document.getElementById("mensajeError");
+
+const COLUMNAS = 10; 
+const COLUMNA_NRO = 0;
+
 function agregarFila() {
-    let tabla = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
-    let nuevaFila = tabla.insertRow();
-    for (let i = 0; i < 9; i++) {
-        let celda = nuevaFila.insertCell(i);
-        celda.contentEditable = "true";
+    const fila = tbody.insertRow();
+    for (let i = 0; i < COLUMNAS; i++) {
+        const celda = fila.insertCell(i);
+        celda.contentEditable = i !== COLUMNA_NRO ? "true" : "false";
+    }
+    actualizarNumerosFila();
+}
+
+function actualizarNumerosFila() {
+    Array.from(tbody.rows).forEach((fila, index) => {
+        fila.cells[COLUMNA_NRO].innerText = index;
+    });
+}
+
+function asegurarFilaExtra() {
+    if (tbody.rows.length === 0) {
+        agregarFila();
     }
 }
 
-document.getElementById("dataTable").addEventListener("paste", function (evento) {
+function procesarPegado(evento) {
     evento.preventDefault();
-    let datosPortapapeles = evento.clipboardData || window.clipboardData;
-    let datosPegados = datosPortapapeles.getData("Text").trim();
-    
-    let filas = datosPegados.split("\n"); 
-    let cuerpoTabla = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
 
-    filas.forEach((textoFila, indiceFila) => {
-        let datosFila = textoFila.split("\t");
-        
-        if (cuerpoTabla.rows.length <= indiceFila) {
+    const texto = (evento.clipboardData || window.clipboardData).getData("Text").trim();
+    const filas = texto.split("\n");
+
+    filas.forEach((filaTexto, i) => {
+        const datos = filaTexto.split("\t");
+        if (tbody.rows.length <= i) {
             agregarFila();
         }
-
-        let celdas = cuerpoTabla.rows[indiceFila].cells;
-        datosFila.forEach((textoCelda, indiceColumna) => {
-            if (indiceColumna < celdas.length) {
-                celdas[indiceColumna].innerText = textoCelda.trim();
+        const celdas = tbody.rows[i].cells;
+        datos.forEach((valor, j) => {
+            if (j + 1 < COLUMNAS) {
+                celdas[j + 1].innerText = valor.trim(); // +1 para saltar "Nro"
             }
         });
     });
     asegurarFilaExtra();
-});
+    actualizarNumerosFila();
+}
 
 function enviarDatosAlServidor() {
-    let tabla = document.getElementById("dataTable");
-    let filas = tabla.getElementsByTagName("tr");
-    let datos = [];
+    const datos = Array.from(tbody.rows).map(fila => 
+        Array.from(fila.cells).map(celda => celda.innerText.trim())
+    );
 
-    for (let i = 1; i < filas.length; i++) { 
-        let datosFila = [];
-        let celdas = filas[i].getElementsByTagName("td");
-        for (let j = 0; j < celdas.length; j++) {
-            datosFila.push(celdas[j].innerText.trim());
-        }
-        datos.push(datosFila);
-    }
-
-    let tarifa_IGR = document.getElementById("tarifa_IGR").value;
-    let tarifa_OTROS = document.getElementById("tarifa_OTROS").value;
-
-    let cargaUtil = {
-        "data": datos,
-        "tarifa_IGR": tarifa_IGR,
-        "tarifa_OTROS": tarifa_OTROS
+    const payload = {
+        data: datos,
+        tarifa_IGR: document.getElementById("tarifa_IGR").value,
+        tarifa_OTROS: document.getElementById("tarifa_OTROS").value
     };
 
     fetch("/procesar_datos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cargaUtil)
+        body: JSON.stringify(payload)
     })
-    .then(respuesta => respuesta.json())
-    .then(datos => {
-        if (datos.success === false) {
-            const filasFallidas = datos.failed_rows.join(", ");
-            const mensajeError = `Filas que fallo el formato: ${filasFallidas}`;
-            document.getElementById("mensajeError").innerHTML = `<p>${mensajeError}</p>`;
+    .then(res => res.json())
+    .then(res => {
+        if (res.success === false) {
+            mensajeError.innerHTML = `<p>Filas que fallaron en el formato: ${res.failed_rows.join(", ")}</p>`;
         } else {
-            window.location.href = datos.download_url;
+            window.location.href = res.download_url;
         }
     })
-    .catch(error => alert("Error al enviar los datos: " + error));
+    .catch(err => alert("Error al enviar los datos: " + err));
 }
+table.addEventListener("paste", procesarPegado);
 
-document.addEventListener("DOMContentLoaded", asegurarFilaExtra);
+document.addEventListener("DOMContentLoaded", () => {
+    asegurarFilaExtra();
+    actualizarNumerosFila();
+});
